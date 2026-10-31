@@ -1,0 +1,18 @@
+use "../tasks.plain" as tasks
+
+test "a task can be completed"
+  set items to [{title: "Learn Plain", done: false}]
+  tasks.finish(items, 1)
+  check items[1].done is true
+end
+
+test "an invalid task number gives a useful error"
+  set caught to false
+  try
+    tasks.finish([], 1)
+  catch issue
+    set caught to true
+    check text.contains(issue.message, "task number")
+  end
+  check caught is true
+end

@@ -1,0 +1,16 @@
+{
+  "name": "Plain",
+  "scopeName": "source.plain",
+  "patterns": [
+    { "name": "comment.line.number-sign.plain", "match": "#.*$" },
+    { "name": "string.quoted.double.plain", "begin": "\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.plain", "match": "\\\\(?:[\\\"/bfnrt]|u[0-9A-Fa-f]{4})" }] },
+    { "match": "\\b(make)\\s+([A-Za-z][A-Za-z0-9_]*)", "captures": { "1": { "name": "keyword.control.plain" }, "2": { "name": "entity.name.function.plain" } } },
+    { "name": "constant.numeric.plain", "match": "(?<![\\w.])(?:[0-9]+(?:\\.[0-9]+)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?\\b" },
+    { "name": "constant.language.plain", "match": "\\b(true|false|nothing)\\b" },
+    { "name": "keyword.control.plain", "match": "\\b(set|to|say|ask|into|if|else|end|repeat|times|and|or|not|is|more|less|than|at|least|most|make|give|for|in|while|stop|skip|add|remove|use|as|try|catch|finally|fail|check|test)\\b" },
+    { "name": "support.function.plain", "match": "\\b(length|type|copy|number|range|keys|values|has|get|text|list|math|json|time|random|files|http|system)\\b" },
+    { "name": "entity.name.function.plain", "match": "\\b[A-Za-z][A-Za-z0-9_]*(?=\\s*\\()" },
+    { "name": "keyword.operator.arithmetic.plain", "match": "[+*/%=-]" },
+    { "name": "punctuation.separator.plain", "match": "[,:.]" }
+  ]
+}

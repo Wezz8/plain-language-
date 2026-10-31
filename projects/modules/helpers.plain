@@ -1,0 +1,7 @@
+make greet(name)
+  give "Hello, " + name + "!"
+end
+
+make double(amount)
+  give amount * 2
+end

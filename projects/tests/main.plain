@@ -1,0 +1,6 @@
+make total(prices)
+  give list.sum(prices)
+end
+
+say "The total is", total([10, 20, 5])
+say "Press Run tests to verify the project."

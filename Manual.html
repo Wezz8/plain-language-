@@ -1,0 +1,360 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Plain 1.0 handbook</title><style>body{background:#f7f6f2;color:#303a2a;font:15px/1.8 "Segoe UI",Arial,sans-serif;margin:0}main{max-width:1000px;margin:auto;padding:35px 30px 80px}header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #d9dfcf;padding-bottom:20px}header strong{font-size:32px;letter-spacing:-2px}header strong span{color:#d25736}a{color:#a95336;text-decoration:none}nav{display:flex;gap:20px;flex-wrap:wrap;margin:25px 0 35px;font-size:13px}h1{color:#be5437;font-size:36px;letter-spacing:-1px;line-height:1.3;margin-top:55px}h2{font-size:23px;margin-top:35px}h3{font-size:18px}code{font:13px Consolas,monospace;background:#ecefe4;padding:2px 4px;border-radius:3px}pre{background:#eff2e8;padding:20px;border:1px solid #dce3d0;border-radius:8px;overflow:auto;line-height:1.8}pre code{background:none;padding:0}table{border-collapse:collapse;width:100%;font-size:13px;margin:15px 0}td,th{border-bottom:1px solid #dae1ce;padding:12px;text-align:left;vertical-align:top}th{color:#637754}.table-scroll{overflow:auto}section{scroll-margin-top:25px}li{margin-bottom:8px}p{max-width:88ch}</style></head><body><main><header><strong>plain<span>.</span></strong><a href="Plain.html">Open Studio ↗</a></header><nav><a href="#language">The language</a><a href="#library">Standard library</a><a href="#tools">Projects & tools</a><a href="#runtime">Runtime & limits</a></nav><section id="language"><h1>The Plain language</h1>
+<p>Plain is a dynamically typed programming language for readable programs. You write exact, small commands rather than unrestricted English. Version 1.0 includes reusable actions, structured data, modules, loops, exceptions, a standard library, and tests. The same interpreter runs in the offline Studio and in Node.js.</p>
+<h2>Your first program</h2>
+<pre><code>set name to &quot;Ada&quot;
+say &quot;Hello,&quot;, name
+
+repeat 3 times
+  say &quot;I made this.&quot;
+end</code></pre>
+<p>Use one command per line. Commands and names are case-sensitive. Commands use lowercase. Blank lines are ignored. A comment starts with <code>#</code>, except inside quoted text. Indentation helps people read; the word <code>end</code> closes a block. Lists, records, function calls, and grouped expressions can span several lines inside brackets.</p>
+<h2>Values and names</h2>
+<div class="table-scroll"><table><tbody>
+<tr><th>Kind</th><th>Examples</th></tr>
+<tr><td>number</td><td><code>10</code>, <code>3.5</code>, <code>-2</code>, <code>1e3</code></td></tr>
+<tr><td>text</td><td><code>&quot;Hello&quot;</code>, <code>&quot;a line\nthen another&quot;</code></td></tr>
+<tr><td>boolean</td><td><code>true</code>, <code>false</code></td></tr>
+<tr><td>nothing</td><td><code>nothing</code></td></tr>
+<tr><td>list</td><td><code>[10, 20, 30]</code></td></tr>
+<tr><td>record</td><td><code>{name: &quot;Ada&quot;, score: 10}</code></td></tr>
+<tr><td>function</td><td>An action created with <code>make</code>, or a library function</td></tr>
+</tbody></table></div>
+<p><code>set</code> creates or changes a name. A name starts with an ASCII letter and can contain letters, digits, and underscores. Examples: <code>score</code>, <code>first_name</code>, <code>player2</code>. Language keywords cannot be names. A name must have a value before you read it. Names may hold different kinds of values at different times.</p>
+<pre><code>set score to 10
+set score to score + 5
+say score</code></pre>
+<p>Text uses double quotes. Escapes follow JSON rules, including <code>\n</code>, <code>\r</code>, <code>\t</code>, <code>\&quot;</code>, <code>\\</code>, and <code>\uXXXX</code>. Text positions count Unicode code points, so an emoji counts as one position; a combined grapheme can contain several code points. Text is immutable: create a new text value to change it.</p>
+<h2>Calculations and output</h2>
+<p>Use <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, and <code>%</code>. <code>%</code> gives the remainder. Parentheses group calculations. <code>+</code> joins text when either side is text, and concatenates two lists. Other arithmetic needs numbers. Dividing by zero raises an error.</p>
+<pre><code>say 2 + 3 * 4
+say (2 + 3) * 4
+say 7 % 3
+say &quot;Score: &quot; + 10
+say &quot;Score:&quot;, 10
+say [1, 2] + [3]</code></pre>
+<p><code>say</code> prints a line. Separate expressions with commas to place a space between them. To print a blank line, use <code>say &quot;&quot;</code>. Lists and records have readable representations; use <code>json.write</code> when you need JSON instead.</p>
+<h2>Choices</h2>
+<pre><code>if score is at least 80
+  say &quot;Excellent&quot;
+else if score is at least 50
+  say &quot;Passed&quot;
+else
+  say &quot;Try again&quot;
+end</code></pre>
+<div class="table-scroll"><table><tbody>
+<tr><th>Comparison</th><th>Meaning</th></tr>
+<tr><td><code>a is b</code></td><td>Equal values</td></tr>
+<tr><td><code>a is not b</code></td><td>Different values</td></tr>
+<tr><td><code>a is more than b</code></td><td>Greater than</td></tr>
+<tr><td><code>a is less than b</code></td><td>Less than</td></tr>
+<tr><td><code>a is at least b</code></td><td>Greater than or equal</td></tr>
+<tr><td><code>a is at most b</code></td><td>Less than or equal</td></tr>
+</tbody></table></div>
+<p>Equality is strict: number <code>18</code> differs from text <code>&quot;18&quot;</code>. Lists and records compare their contents recursively; record field order does not affect equality. Functions compare by identity. Ordering comparisons need numbers.</p>
+<p>Combine conditions with <code>not</code>, <code>and</code>, and <code>or</code>. Conditions must be booleans. A number, text, or list is not implicitly true or false. <code>and</code> and <code>or</code> stop as soon as the result is known.</p>
+<pre><code>if age is at least 18 and age is less than 65
+  say &quot;In range&quot;
+end</code></pre>
+<p>From highest to lowest precedence: calls/fields/positions; unary <code>+</code> and <code>-</code>; <code>* / %</code>; <code>+ -</code>; comparisons; <code>not</code>; <code>and</code>; <code>or</code>. Use parentheses to make complicated conditions clear. Chained comparisons such as <code>1 is less than age is less than 10</code> are invalid; combine two comparisons with <code>and</code>.</p>
+<h2>Lists and records</h2>
+<p>Lists preserve order. <strong>Positions start at 1.</strong> Reading or changing an invalid position raises an error. Record field names can be identifiers or quoted text. Missing fields raise an error; <code>has</code> and <code>get</code> let you handle optional fields.</p>
+<pre><code>set people to [
+  {name: &quot;Ada&quot;, score: 92},
+  {name: &quot;Sam&quot;, score: 78}
+]
+
+say people[1].name
+set people[2].score to 85
+add {name: &quot;Jo&quot;, score: 90} to people
+remove people[1]
+
+set details to {&quot;full name&quot;: &quot;Ada Okafor&quot;}
+say details[&quot;full name&quot;]
+say get(details, &quot;nickname&quot;, &quot;No nickname yet&quot;)</code></pre>
+<p><code>add value to items</code> appends one item. <code>remove items[2]</code> removes an item and shifts later positions left. <code>remove person.name</code> removes a field. Setting a new record field creates it. Setting a list position must use an existing position; use <code>add</code> to append.</p>
+<p>Lists and records are shared by reference. <code>set second to first</code> gives both names the same data. Use <code>copy(first)</code> for an independent, deep copy. Cyclic structures are rejected. Library/module namespaces are read-only; exported data records can still be shared and changed.</p>
+<h2>Loops</h2>
+<pre><code>repeat 3 times
+  say &quot;Hello&quot;
+end
+
+for person at position in people
+  say position, person.name
+end
+
+set count to 1
+while count is at most 5
+  say count
+  set count to count + 1
+end</code></pre>
+<p><code>repeat</code> reads its count once. The count must be a whole number, zero or more. <code>for item in items</code> visits list items or text characters. Optional <code>at position</code> names the current 1-based position. Iteration uses a shallow snapshot: adding/removing list entries does not change the current traversal; changes to shared record fields remain visible.</p>
+<p><code>while condition</code> checks before each iteration. <code>skip</code> moves to the next iteration of the nearest loop. <code>stop</code> leaves that loop. They do not stop the whole application; the Studio Stop button cancels the application. Loop names remain in the current scope after a loop. To walk through a record, use <code>for field in keys(record)</code>.</p>
+<h2>Reusable actions</h2>
+<pre><code>make total(prices)
+  give list.sum(prices)
+end
+
+say total([10, 20, 5])</code></pre>
+<p>Define an action with <code>make name(parameters)</code> and call it with parentheses. Define it before calling it. <code>give value</code> returns immediately; <code>give</code> alone returns <code>nothing</code>. An action that reaches its end also gives <code>nothing</code>. Argument counts must match exactly. Recursion works; give recursive actions a stopping condition.</p>
+<p>Each call has local parameters and local assignments. Actions can read outer names, but <code>set score to 10</code> inside an action creates/changes its local <code>score</code>, leaving an outer <code>score</code> alone. Changing a shared record/list field intentionally changes that data. <code>if</code>, <code>for</code>, <code>while</code>, <code>repeat</code>, and <code>try</code> do not create new scopes.</p>
+<p>Actions capture their lexical surroundings and can be passed around or returned:</p>
+<pre><code>make multiplier(factor)
+  make apply(value)
+    give value * factor
+  end
+  give apply
+end
+
+set twice to multiplier(2)
+say list.map([1, 2, 3], twice)</code></pre>
+<p>Calls wait for their result, including file access, HTTP, and sleeping. You do not need async/await syntax. Collection callbacks also run sequentially. This version has no native threads or parallel-execution primitive.</p>
+<h2>Questions</h2>
+<pre><code>ask &quot;What is your name?&quot; into name
+ask number &quot;How many?&quot; into count
+say &quot;Hello,&quot;, name</code></pre>
+<p><code>ask</code> returns text. <code>ask number</code> requires a finite numeric answer. In Studio, invalid numeric input stays in the answer box so you can correct it. The terminal reports invalid numeric input as a program error. End-of-input cancels the program. For an explicit conversion elsewhere, use <code>number(&quot;12.5&quot;)</code>.</p>
+<h2>Modules</h2>
+<pre><code>use &quot;helpers.plain&quot; as helpers
+say helpers.double(12)</code></pre>
+<p>An imported file runs once per program run. Its top-level names become fields of the namespace: actions, values, and imported namespaces. It has its own scope and shares the standard library. Imports are relative to the importing file. An import cycle is an error. Imported namespace names cannot be replaced through field assignment. A fresh run reloads modules; REPL sessions cache them until <code>.reset</code>.</p>
+<p>Project files accessed through <code>files.read</code> and other file functions are relative to the <strong>project root</strong>, even when called from a module in a subfolder.</p>
+<h2>Handling failures</h2>
+<pre><code>try
+  set config to json.read(files.read(&quot;settings.json&quot;))
+catch issue
+  say issue.message
+  set config to {theme: &quot;light&quot;}
+finally
+  say &quot;Settings step finished&quot;
+end</code></pre>
+<p><code>catch issue</code> receives a record with <code>message</code>, <code>code</code>, <code>source</code>, <code>line</code>, and <code>column</code>. <code>catch</code> or <code>finally</code> is required; both are allowed. <code>finally</code> runs on ordinary success, failure, <code>give</code>, <code>stop</code>, and <code>skip</code>. An error or return in <code>finally</code> replaces the earlier outcome. Cancellation and execution limits stop immediately and bypass further execution, including cleanup blocks.</p>
+<p><code>fail &quot;message&quot;</code> raises a <code>USER_ERROR</code>. <code>check condition</code> raises <code>CHECK_FAILED</code> when false; an optional second expression supplies a message: <code>check total is 10, &quot;Expected ten&quot;</code>.</p>
+<p>Common codes are <code>UNKNOWN_NAME</code>, <code>TYPE_ERROR</code>, <code>ARGUMENT_ERROR</code>, <code>NUMBER_ERROR</code>, <code>INDEX_ERROR</code>, <code>FIELD_ERROR</code>, <code>MODULE_ERROR</code>, <code>MODULE_CYCLE</code>, <code>JSON_ERROR</code>, <code>HTTP_ERROR</code>, <code>HOST_ERROR</code>, <code>CAPABILITY_ERROR</code>, <code>USER_ERROR</code>, <code>CHECK_FAILED</code>, <code>READ_ONLY</code>, <code>PATH_ERROR</code>, <code>CYCLE</code>, <code>LIMIT</code>, and <code>STOPPED</code>. Syntax errors use <code>PLAIN_ERROR</code>. Cancellation (<code>STOPPED</code>) and resource limits (<code>LIMIT</code>) cannot be caught by a Plain program.</p>
+<h2>Tests</h2>
+<pre><code>use &quot;../helpers.plain&quot; as helpers
+
+test &quot;doubling works&quot;
+  check helpers.double(6) is 12
+end</code></pre>
+<p>Put tests in files ending in <code>.test.plain</code>, then use Run tests in Studio or <code>plain test</code> in the terminal. Test blocks are skipped during normal runs. The file's ordinary top-level code runs first, followed by its registered tests. Each test has local assignments, while reads can use file/module values. Shared data is still shared: create or copy mutable fixtures inside each test. A failing check is recorded and the next test continues. Syntax errors, cancellation, and resource limits abort that run.</p>
+<h2>The complete command set</h2>
+<div class="table-scroll"><table><tbody>
+<tr><th>Form</th><th>Purpose</th></tr>
+<tr><td><code>set target to expression</code></td><td>Save/change a name, field, or list item</td></tr>
+<tr><td><code>say expression, expression</code></td><td>Print one or more values</td></tr>
+<tr><td><code>ask [number] question into name</code></td><td>Read text or a number</td></tr>
+<tr><td><code>if condition / else if condition / else / end</code></td><td>Choose a branch</td></tr>
+<tr><td><code>repeat count times / end</code></td><td>Repeat a fixed number of times</td></tr>
+<tr><td><code>for name [at position] in value / end</code></td><td>Walk through a list or text</td></tr>
+<tr><td><code>while condition / end</code></td><td>Repeat while true</td></tr>
+<tr><td><code>stop</code>, <code>skip</code></td><td>Leave a loop / advance to its next iteration</td></tr>
+<tr><td><code>make name(parameters) / end</code></td><td>Define a reusable action</td></tr>
+<tr><td><code>give [expression]</code></td><td>Return from an action</td></tr>
+<tr><td><code>add expression to list</code></td><td>Append one item</td></tr>
+<tr><td><code>remove target[field]</code>, <code>remove target.field</code></td><td>Remove an item or field</td></tr>
+<tr><td><code>use &quot;path.plain&quot; as name</code></td><td>Load a module</td></tr>
+<tr><td><code>try / catch name / finally / end</code></td><td>Handle a failure</td></tr>
+<tr><td><code>fail text</code></td><td>Raise an application error</td></tr>
+<tr><td><code>check condition[, message]</code></td><td>Assert a condition</td></tr>
+<tr><td><code>test &quot;description&quot; / end</code></td><td>Define a test case</td></tr>
+<tr><td><code>action(arguments)</code></td><td>Call an action for its effect</td></tr>
+</tbody></table></div>
+<p>The words in square brackets in this table indicate optional syntax; do not type those brackets unless you are creating/accessing a list. All ordinary expressions are values, names, calls, lists, records, fields, positions, grouped expressions, or the operators described above. There is no JavaScript evaluation or unrestricted host-language access in Plain source.</p></section>
+<section id="library"><h1>Standard library</h1>
+<p>All calls wait for their result. Positions start at 1. Optional arguments are described in each row.</p>
+<div class="table-scroll"><table><tbody>
+<tr><th>Call</th><th>Behaviour</th></tr>
+<tr><td><code>length(value)</code></td><td>Count Unicode characters, list items, or record fields.</td></tr>
+<tr><td><code>type(value)</code></td><td>Return number, text, boolean, nothing, list, record, or function.</td></tr>
+<tr><td><code>copy(value)</code></td><td>Deep-copy lists and records. Functions keep their identity.</td></tr>
+<tr><td><code>number(value)</code></td><td>Convert numeric text to a number; invalid text raises NUMBER_ERROR.</td></tr>
+<tr><td><code>text(value)</code></td><td>Turn a value into readable text. Records and lists show their contents.</td></tr>
+<tr><td><code>range(end)</code></td><td>Build [1, …, end]. Also accepts range(start, end, step). Both ends are included; zero produces an empty list.</td></tr>
+<tr><td><code>keys(record)</code></td><td>Return field names in insertion order.</td></tr>
+<tr><td><code>values(record)</code></td><td>Return field values in insertion order.</td></tr>
+<tr><td><code>has(value, item)</code></td><td>Check a record field name, list item, or text substring.</td></tr>
+<tr><td><code>get(record, field, fallback)</code></td><td>Read a field, returning the optional fallback when it is missing. The default fallback is nothing.</td></tr>
+<tr><td><code>text.upper(value)</code></td><td>Convert text to uppercase.</td></tr>
+<tr><td><code>text.lower(value)</code></td><td>Convert text to lowercase.</td></tr>
+<tr><td><code>text.trim(value)</code></td><td>Remove whitespace at both ends.</td></tr>
+<tr><td><code>text.contains(value, part)</code></td><td>Check whether text contains a substring.</td></tr>
+<tr><td><code>text.starts(value, part)</code></td><td>Check the start of text.</td></tr>
+<tr><td><code>text.ends(value, part)</code></td><td>Check the end of text.</td></tr>
+<tr><td><code>text.split(value, separator)</code></td><td>Split into a list. An empty separator splits Unicode characters.</td></tr>
+<tr><td><code>text.lines(value)</code></td><td>Split CRLF, LF, or CR line endings into a list.</td></tr>
+<tr><td><code>text.slice(value, start, end)</code></td><td>Read a range of characters, starting at 1. The optional end is included.</td></tr>
+<tr><td><code>text.replace(value, find, replacement)</code></td><td>Replace every exact occurrence. The search text must not be empty.</td></tr>
+<tr><td><code>text.repeat(value, count)</code></td><td>Repeat text a nonnegative whole number of times.</td></tr>
+<tr><td><code>list.first(items)</code></td><td>Return the first item, or nothing for an empty list.</td></tr>
+<tr><td><code>list.last(items)</code></td><td>Return the last item, or nothing for an empty list.</td></tr>
+<tr><td><code>list.slice(items, start, end)</code></td><td>Copy an inclusive range, starting at 1. End is optional; start can be length + 1 for an empty slice.</td></tr>
+<tr><td><code>list.join(items, separator)</code></td><td>Join readable values as text. The default separator is a comma and a space.</td></tr>
+<tr><td><code>list.reverse(items)</code></td><td>Return a reversed copy; the input is unchanged.</td></tr>
+<tr><td><code>list.sum(items)</code></td><td>Add a list of numbers; an empty list totals zero.</td></tr>
+<tr><td><code>list.unique(items)</code></td><td>Return unique items in their original order, using structural equality.</td></tr>
+<tr><td><code>list.map(items, action)</code></td><td>Call action(item) for every item and collect the results.</td></tr>
+<tr><td><code>list.filter(items, action)</code></td><td>Keep items for which action(item) gives true.</td></tr>
+<tr><td><code>list.find(items, action)</code></td><td>Return the first matching item, or nothing.</td></tr>
+<tr><td><code>list.some(items, action)</code></td><td>True when at least one item matches. Stops at the first match.</td></tr>
+<tr><td><code>list.every(items, action)</code></td><td>True when every item matches. An empty list gives true.</td></tr>
+<tr><td><code>list.reduce(items, initial, action)</code></td><td>Combine items by calling action(result, item), beginning with initial.</td></tr>
+<tr><td><code>list.sort(items, action)</code></td><td>Return a stable ascending copy of numbers or text. An optional action(item) supplies a sort key. Text uses Unicode string order.</td></tr>
+<tr><td><code>math.abs(value)</code></td><td>Absolute value.</td></tr>
+<tr><td><code>math.floor(value)</code></td><td>Round down to a whole number.</td></tr>
+<tr><td><code>math.ceil(value)</code></td><td>Round up to a whole number.</td></tr>
+<tr><td><code>math.sqrt(value)</code></td><td>Square root of a nonnegative number.</td></tr>
+<tr><td><code>math.sin(value)</code></td><td>Sine, with the angle in radians.</td></tr>
+<tr><td><code>math.cos(value)</code></td><td>Cosine, with the angle in radians.</td></tr>
+<tr><td><code>math.tan(value)</code></td><td>Tangent, with the angle in radians.</td></tr>
+<tr><td><code>math.log(value)</code></td><td>Natural logarithm of a positive number.</td></tr>
+<tr><td><code>math.round(value, places)</code></td><td>Round to 0–15 decimal places; places defaults to zero. Halfway values follow JavaScript rounding toward positive infinity.</td></tr>
+<tr><td><code>math.power(base, exponent)</code></td><td>Raise a number to a power.</td></tr>
+<tr><td><code>math.min(items)</code></td><td>Smallest number in a nonempty list. Also accepts math.min(a, b).</td></tr>
+<tr><td><code>math.max(items)</code></td><td>Largest number in a nonempty list. Also accepts math.max(a, b).</td></tr>
+<tr><td><code>math.clamp(value, low, high)</code></td><td>Keep a number between low and high, including the limits.</td></tr>
+<tr><td><code>json.read(text)</code></td><td>Parse JSON into Plain data. JSON null becomes nothing. Invalid input raises JSON_ERROR.</td></tr>
+<tr><td><code>json.write(value, pretty)</code></td><td>Serialize data as JSON. Optional pretty=true adds indentation. Functions are not serializable.</td></tr>
+<tr><td><code>time.now()</code></td><td>Current UTC timestamp as ISO text.</td></tr>
+<tr><td><code>time.stamp()</code></td><td>Milliseconds since the Unix epoch.</td></tr>
+<tr><td><code>time.date(value)</code></td><td>UTC date as YYYY-MM-DD. With no argument, use today; otherwise accept date text understood by JavaScript Date.</td></tr>
+<tr><td><code>time.sleep(milliseconds)</code></td><td>Wait for 0–600,000 milliseconds; Stop cancels the wait. Returns nothing.</td></tr>
+<tr><td><code>random.number()</code></td><td>A pseudorandom number from 0 up to, but not including, 1. Not a cryptographic generator.</td></tr>
+<tr><td><code>random.integer(low, high)</code></td><td>A pseudorandom whole number including both limits.</td></tr>
+<tr><td><code>random.pick(items)</code></td><td>Choose one item from a nonempty list.</td></tr>
+<tr><td><code>files.read(path)</code></td><td>Read a UTF-8 project file. Terminal reads are limited to 5 MB.</td></tr>
+<tr><td><code>files.write(path, text)</code></td><td>Create or replace a UTF-8 project file. Create parent folders with files.mkdir first in the terminal.</td></tr>
+<tr><td><code>files.append(path, text)</code></td><td>Append UTF-8 text, creating the file if needed.</td></tr>
+<tr><td><code>files.exists(path)</code></td><td>Check whether a project file or folder exists.</td></tr>
+<tr><td><code>files.list(path)</code></td><td>List immediate child names in sorted order. Path defaults to the project root.</td></tr>
+<tr><td><code>files.remove(path)</code></td><td>Remove one file. Does not delete folders recursively. Studio entry files are protected.</td></tr>
+<tr><td><code>files.mkdir(path)</code></td><td>Create a project folder, including parent folders.</td></tr>
+<tr><td><code>http.get(url)</code></td><td>GET a URL and return {status, ok, body, headers}. Requires HTTP to be enabled.</td></tr>
+<tr><td><code>http.send(method, url, body, headers)</code></td><td>Send an HTTP request. Body and headers are optional; record/list bodies are JSON-encoded. Set Content-Type explicitly when needed.</td></tr>
+<tr><td><code>http.json(url)</code></td><td>GET and parse JSON, raising HTTP_ERROR when the server returns a non-success status.</td></tr>
+</tbody></table></div>
+<h2>Values and constants</h2>
+<p><code>math.pi</code>, <code>math.e</code>, <code>system.version</code>, <code>system.platform</code>, and <code>system.args</code> are read-only library values.</p></section>
+<section id="tools"><h1>Projects and tools</h1>
+<h2>Start in Studio</h2>
+<p>Open <code>Plain.html</code> or double-click <code>Start Plain.cmd</code>. Studio is an offline application in one HTML file. It needs no account, server, or installation. <code>Manual.html</code> is this handbook; keep it beside Studio for the handbook link.</p>
+<ul>
+<li>Select an example to explore an idea, or choose New project.</li>
+<li>Use + to add a source/data file, and select its tab to edit it.</li>
+<li>Set Start from to the application's entry file. Run program always starts there.</li>
+<li>Format indents the active source file. Check project parses all source files and checks import paths and cycles; it does not prove types or runtime values are correct.</li>
+<li>Run tests discovers <code>.test.plain</code> files; if none exist, it checks the active source file for top-level tests.</li>
+<li>Output shows printed lines and errors. Values shows the final top-level values from the run. Project files shows source/data files, including files created by your program.</li>
+<li>Rename changes the file's name; update any import paths that refer to it. Removing a non-entry file offers Undo removal until you replace the output. Choose a different entry before removing the existing entry.</li>
+<li>Each edited/imported project is saved in this browser when storage is available. The Saved projects menu reopens projects. Example switching keeps edited projects. Browser storage is a convenience; Export ZIP makes a portable backup.</li>
+<li>Open file adds a text file without replacing an existing file of the same name. Save file saves the active file, preserving its actual filename and extension.</li>
+</ul>
+<p>Ctrl+Enter runs the project. Ctrl+Shift+Enter runs tests. Ctrl+S saves the active file. Ctrl+Shift+S exports a ZIP. Escape or Stop cancels execution, including waiting for input or HTTP. Enter continues your indentation; Tab retains normal keyboard navigation.</p>
+<h2>Move between Studio and terminal</h2>
+<p>Export ZIP includes source files, data, folders, and a <code>plain.json</code> manifest. Extract it, then run its folder with the terminal tools. Import ZIP opens the same project in Studio. ZIPs made by the OS with one enclosing project folder are supported when they contain <code>plain.json</code>. Studio handles text project files; it is not a binary asset editor.</p>
+<p>The included task-manager project is a complete console application. It adds tasks, marks tasks complete, reads/writes JSON, uses a module, and includes tests. Its Studio data lives in the saved project and exported ZIP; terminal data lives in the project's actual files.</p>
+<h2>Terminal commands</h2>
+<p>The terminal tools require Node.js 18 or newer. No npm packages need to be installed. Open a terminal in the Plain product folder. On Windows, <code>Plain.cmd</code> is a command wrapper; with no arguments, it opens Studio. The portable commands below work wherever Node.js is installed.</p>
+<pre><code>node plain.cjs new my-app
+node plain.cjs run my-app
+node plain.cjs check my-app
+node plain.cjs test my-app
+node plain.cjs build my-app -o my-app/dist/app.cjs
+node my-app/dist/app.cjs</code></pre>
+<div class="table-scroll"><table><tbody>
+<tr><th>Command</th><th>Result</th></tr>
+<tr><td><code>plain run [file or folder]</code></td><td>Run the selected program, defaulting to the current project</td></tr>
+<tr><td><code>plain file.plain</code></td><td>Short form of run</td></tr>
+<tr><td><code>plain check [file or folder]</code></td><td>Parse the entry and all its static imports, including those in inactive branches</td></tr>
+<tr><td><code>plain --check file.plain</code></td><td>Compatible short form of check</td></tr>
+<tr><td><code>plain format file.plain</code></td><td>Print formatted source</td></tr>
+<tr><td><code>plain format file.plain --write</code></td><td>Save formatted source</td></tr>
+<tr><td><code>plain test [file or folder]</code></td><td>Run a file or recursively discover <code>.test.plain</code> files</td></tr>
+<tr><td><code>plain new new-folder</code></td><td>Create a module-based project with tests; an existing target folder is not overwritten</td></tr>
+<tr><td><code>plain build [file or folder] -o app.cjs</code></td><td>Bundle all static Plain source modules into one runnable Node.js file</td></tr>
+<tr><td><code>plain repl</code></td><td>Start a persistent interactive session</td></tr>
+<tr><td><code>plain library</code></td><td>List the standard-library calls and argument counts</td></tr>
+<tr><td><code>plain --version</code></td><td>Print the language version</td></tr>
+<tr><td><code>plain --help</code></td><td>Show help</td></tr>
+</tbody></table></div>
+<p><code>plain</code> above means <code>node plain.cjs</code> or the Windows wrapper. Syntax/runtime failures return exit code 1. A successful command returns 0. A test suite with failures returns 1. No discovered tests is a failure in the terminal. Test discovery skips <code>node_modules</code>, <code>.git</code>, <code>dist</code>, and <code>.plain</code> directories and does not follow directory links.</p>
+<p>Run options are <code>--allow-net</code>, <code>--root folder</code>, <code>--max-steps number</code>, and <code>--max-output number</code>. After <code>--</code>, remaining arguments become the text list <code>system.args</code>.</p>
+<pre><code>node plain.cjs run my-app --max-steps 2000000 -- one two</code></pre>
+<p>When you select a project folder, <code>plain.json</code> chooses its <code>main</code> file; without a manifest it uses <code>main.plain</code>. When you select a source file, the nearest ancestor containing <code>plain.json</code> becomes the project root. Without one, its containing folder is the root. <code>--root</code> overrides that boundary, and the entry must remain inside it.</p>
+<h2>Builds</h2>
+<p>The build command is a <strong>source bundler</strong>, not a machine-code compiler. A bundled <code>.cjs</code> contains the parser, runtime, standard library, Node host adapter, and all imported Plain source. It runs with Node.js 18+ without the original <code>.plain</code> source files or npm dependencies. Builds refuse to overwrite a source file.</p>
+<p>Data files are separate. Put required data beside the built application, or distribute a project ZIP containing the application and data. The bundled application's directory becomes its file root. Its command-line <code>--allow-net</code> enables HTTP; other command-line values become <code>system.args</code>.</p>
+<h2>REPL</h2>
+<p><code>plain repl</code> requires an interactive terminal. Variables and actions persist between entries. Close a block with <code>end</code> to run it. Use <code>say expression</code> to see a value. <code>.reset</code> clears values and cached modules; <code>.help</code> shows session help; <code>.exit</code> leaves. A failed entry keeps assignments already performed in that session.</p>
+<h2>Editor support</h2>
+<p>The product includes a VS Code language extension folder with <code>.plain</code> file recognition, syntax colouring, comments, bracket matching, and indentation rules. Its README explains the local installation. Studio also works independently of an external editor.</p>
+<h2>Building the Plain product itself</h2>
+<pre><code>node --test
+node build.cjs</code></pre>
+<p>The first command checks the language, standard library, projects, filesystem boundaries, HTTP integration, bundled applications, ZIP round trips, and Studio event behaviour. Studio tests use an in-memory DOM; they are not visual browser tests. The second command builds the offline Studio, example catalogue, generated library reference, and standalone HTML handbook. All runtime dependencies are included; the ZIP library's notices are in <code>vendor</code>.</p></section>
+<section id="runtime"><h1>Runtime, embedding, and boundaries</h1>
+<h2>Defined execution model</h2>
+<p>Plain 1.0 is a tree-walking interpreter written in JavaScript, shared by the browser and Node.js. It has dynamic types, lexical closures, function-local assignment, mutable lists/records, structural equality, and sequential, awaited calls. Each normal run starts fresh. Modules are cached for that run; a persistent session keeps its values and module cache until reset.</p>
+<p>This release supports console applications, data transformation, scripts, file-based tools, and HTTP clients. It does not include native machine-code output, native threads, classes/inheritance, a GUI widget framework, direct database drivers, an HTTP server API, a package registry, or a language server. Lists, records, actions, modules, and JSON cover the data/reuse model implemented here. The build command packages this runtime for Node.js.</p>
+<p>There is no supported-language claim beyond the behaviour described in the handbook and exercised by the included test suite. New features should be accompanied by changes to the parser, runtime, reference, and relevant tests. Product maturity and suitability for a particular workload need real-world use in addition to automated checks.</p>
+<h2>Numbers</h2>
+<p>Numbers use IEEE-754 double-precision floating-point arithmetic. Finite fractional numbers are supported; NaN and infinity are rejected. Integers are exact up to 9,007,199,254,740,991. For example, <code>0.1 + 0.2</code> can show <code>0.30000000000000004</code>. <code>math.round</code> is useful for display but does not turn floating-point values into an exact decimal type. There is no arbitrary-precision integer or exact decimal type in this release.</p>
+<h2>Resource limits</h2>
+<div class="table-scroll"><table><tbody>
+<tr><th>Resource</th><th>Default</th></tr>
+<tr><td>Execution</td><td>1,000,000 steps per run; statements, expression nodes, calls, and loop iterations count</td></tr>
+<tr><td>Studio output and generated text</td><td>100,000 characters per run/value</td></tr>
+<tr><td>Terminal output and generated text</td><td>1,000,000 characters by default; adjustable with --max-output</td></tr>
+<tr><td>Lists</td><td>100,000 items per produced list</td></tr>
+<tr><td>Nested calls</td><td>128, including active native callback frames</td></tr>
+<tr><td>Parser nesting</td><td>64 nested blocks/grouped expressions</td></tr>
+<tr><td>Expression tokens</td><td>512 per logical expression</td></tr>
+<tr><td>Source file</td><td>500,000 characters in the engine; Studio additionally limits files to 500 KB UTF-8</td></tr>
+<tr><td>Structured data nesting</td><td>Approximately 128 levels; construction, JSON conversion, and display enforce bounds</td></tr>
+<tr><td>JSON serialization</td><td>Up to 100,000 expanded values and 1,000,000 text characters</td></tr>
+<tr><td>Value display</td><td>Up to 1,000,000 characters</td></tr>
+<tr><td>Studio project</td><td>100 files, 1,000 folders, and 5 MB of UTF-8 content</td></tr>
+<tr><td>Studio visible output</td><td>First 2,000 lines; use the terminal for longer output</td></tr>
+<tr><td>Terminal file read / HTTP body</td><td>5 MB</td></tr>
+<tr><td>Terminal HTTP request</td><td>20 seconds</td></tr>
+<tr><td>One sleep</td><td>0–600,000 milliseconds</td></tr>
+</tbody></table></div>
+<p>Calls and callback invocations count execution work; algorithms such as sort and unique also count per-item steps. Large, repeated structures are bounded during display and serialization, rather than expanded without limit. File and HTTP host adapters also bound input size. Limits are practical defaults, not a guarantee of constant memory/time for every possible operation. A failed program can leave file writes or shared session mutations already performed; execution is not transactional.</p>
+<h2>Files and network</h2>
+<p>Studio file operations use the current text project. They do not read arbitrary files from the computer. Import/Open file lets the user select input; Export/Save downloads output. Entry-file deletion is protected in Studio, and Studio manages its plain.json manifest from the project-name and entry controls. Browser storage may be disabled, private, quota-limited, or cleared; portable ZIP backups are the durable format.</p>
+<p>The terminal host resolves file paths under the project root and checks existing path components for links outside that root. Absolute paths are accepted only when they resolve within that root. Imports use relative project paths. The host has ordinary operating-system access, so these checks are application boundaries, not a hardened security sandbox against concurrent filesystem manipulation. There is no shell-execution or arbitrary JavaScript API in Plain source.</p>
+<p>HTTP is opt-in. Enable Allow HTTP in Studio, or pass <code>--allow-net</code> to the terminal. Studio requests are subject to browser CORS rules. The terminal supports ordinary HTTP/HTTPS requests without browser CORS restrictions. Bodies are UTF-8 text; records/lists passed to <code>http.send</code> are JSON-encoded. Set a <code>Content-Type</code> header when the receiving API requires it. HTTP responses contain <code>status</code>, <code>ok</code>, <code>body</code>, and <code>headers</code>. Stop cancels an outstanding request; filesystem operations already in flight may complete.</p>
+<p>Dates come from the host clock. <code>time.now()</code> and <code>time.date()</code> produce UTC ISO output; parsing supplied date text follows JavaScript Date. Random values use a pseudorandom host source, not a cryptographic generator.</p>
+<h2>Embed Plain</h2>
+<pre><code>const Plain = require(&quot;./plain.js&quot;);
+
+async function example() {
+  const result = await Plain.run(
+    'set score to 10\nsay score + 5',
+    {
+      sourceName: &quot;main.plain&quot;,
+      write: line =&gt; console.log(line),
+      read: async (question, { numeric, signal }) =&gt; &quot;3&quot;,
+      maxSteps: 1000000
+    }
+  );
+  console.log(result.variables.score);
+}
+example();</code></pre>
+<p><code>run(source, options)</code> returns <code>output</code>, <code>variables</code>, <code>steps</code>, <code>tests</code>, <code>passed</code>, and <code>failed</code>. Output values are text lines. Variables contains top-level user names; functions are runtime values, not JSON data. Use <code>Plain.inspect(value)</code> for readable output and <code>Plain.type(value)</code> for the language type name.</p>
+<p><code>parse(source, {sourceName})</code> returns an AST or throws a <code>PlainError</code>. It checks syntax without execution. <code>format(source)</code> validates and returns consistently indented source. <code>catalog()</code> returns built-in function names and minimum/maximum argument counts. <code>resolvePath(path, from)</code> resolves a relative project path, rejecting traversal outside the project.</p>
+<p><code>createSession(options)</code> exposes asynchronous <code>run(source, overrides)</code>, <code>variables()</code>, and <code>reset()</code>. A session accepts one run at a time. Each invocation has fresh execution/output limits while keeping its scope and module cache. Do not change host-capability policies midway through a persistent session containing mutable application state.</p>
+<p>Optional adapters are <code>files</code> with read/write/append/exists/list/remove/mkdir methods; <code>loadModule(specifier, from)</code> returning <code>{id, source}</code>; and <code>request({method, url, body, headers, signal})</code> returning a response record. Input adapters return text or <code>null</code> to cancel. Adapters can be asynchronous. Provide an AbortSignal as <code>signal</code>; callbacks should also honor it to stop their own work. Host errors become readable <code>HOST_ERROR</code> failures.</p>
+<p>Other options include <code>maxOutputChars</code>, <code>maxItems</code>, <code>maxCallDepth</code>, <code>args</code>, <code>platform</code>, <code>test</code>, and <code>onTest(result)</code>. Positive integer limits are required. <code>now</code> and <code>random</code> can supply deterministic sources for testing. A <code>PlainError</code> includes <code>message</code>, <code>code</code>, <code>source</code>, <code>line</code>, <code>column</code>, and call <code>frames</code>. <code>onTest</code> receives each completed test result. Failed test checks are returned in the result; fatal errors, cancellation, and limits reject the run.</p>
+<h2>Source map</h2>
+<ul>
+<li><code>plain.js</code>: tokenizer, parser, interpreter, value semantics, and standard library.</li>
+<li><code>node-host.cjs</code>: project-scoped files, terminal input, HTTP, and error presentation.</li>
+<li><code>cli.cjs</code> / <code>plain.cjs</code>: commands and executable entry point.</li>
+<li><code>tooling.cjs</code>: project discovery, import graph, scaffolding, and source bundler.</li>
+<li><code>src/project.js</code>: Studio project model and bounded ZIP import/export.</li>
+<li><code>src/studio.js</code>: Studio controls and run/test/check workflow.</li>
+<li><code>src/playground.html</code> / <code>src/playground.css</code>: the preserved Plain visual design and layout.</li>
+<li><code>library-info.cjs</code>: shared library documentation catalogue.</li>
+<li><code>build.cjs</code>: offline product and handbook builder.</li>
+<li><code>tests</code>: unit, regression, host, CLI, packaging, and Studio event tests.</li>
+</ul></section></main></body></html>

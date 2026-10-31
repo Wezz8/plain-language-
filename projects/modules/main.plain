@@ -1,0 +1,6 @@
+use "helpers.plain" as helpers
+
+say helpers.greet("world")
+for amount in range(1, 4)
+  say "Double", amount, "is", helpers.double(amount)
+end

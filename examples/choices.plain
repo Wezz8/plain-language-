@@ -1,0 +1,7 @@
+set score to 75
+
+if score is at least 50
+  say "You passed!"
+else
+  say "Keep practising."
+end

@@ -1,0 +1,13 @@
+{
+  "name": "plain-language",
+  "displayName": "Plain Language",
+  "description": "Syntax colouring and editing rules for Plain programs.",
+  "version": "1.0.0",
+  "publisher": "plain-local",
+  "engines": { "vscode": "^1.70.0" },
+  "categories": ["Programming Languages"],
+  "contributes": {
+    "languages": [{ "id": "plain", "aliases": ["Plain", "plain"], "extensions": [".plain"], "configuration": "./language-configuration.json" }],
+    "grammars": [{ "language": "plain", "scopeName": "source.plain", "path": "./syntaxes/plain.tmLanguage.json" }]
+  }
+}

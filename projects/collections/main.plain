@@ -1,0 +1,17 @@
+set people to [
+  {name: "Ada", score: 92},
+  {name: "Sam", score: 78},
+  {name: "Jo", score: 85}
+]
+
+for person at position in people
+  say position, person.name, "scored", person.score
+end
+
+make score_of(person)
+  give person.score
+end
+
+say "Scores:", list.map(people, score_of)
+say "Average:", list.sum(list.map(people, score_of)) / length(people)
+say "The first person:", people[1].name

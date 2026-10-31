@@ -1,0 +1,13 @@
+use "main.plain" as app
+
+test "three prices add up"
+  check app.total([10, 20, 5]) is 35
+end
+
+test "an empty basket costs nothing"
+  check app.total([]) is 0
+end
+
+test "decimal values work"
+  check math.round(app.total([2.5, 1.25]), 2) is 3.75
+end

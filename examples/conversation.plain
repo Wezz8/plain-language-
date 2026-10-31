@@ -1,0 +1,12 @@
+ask "What is your name?" into name
+say "Hello, " + name + "!"
+
+ask number "How many stars would you like?" into stars
+
+if stars is at least 0 and stars is at most 20
+  repeat stars times
+    say "*"
+  end
+else
+  say "Try a whole number from 0 to 20 next time."
+end

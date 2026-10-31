@@ -1,0 +1,19 @@
+make show(items)
+  if length(items) is 0
+    say "No tasks yet. Add your first one."
+  end
+  for item at position in items
+    if item.done
+      say position, "[done]", item.title
+    else
+      say position, "[ ]", item.title
+    end
+  end
+end
+
+make finish(items, position)
+  if position is less than 1 or position is more than length(items)
+    fail "Choose a task number from the list."
+  end
+  set items[position].done to true
+end

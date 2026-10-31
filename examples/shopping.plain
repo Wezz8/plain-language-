@@ -1,0 +1,10 @@
+set price to 20
+set quantity to 3
+set total to price * quantity
+
+if total is at least 50
+  set total to total - 5
+  say "You got a 5-point discount."
+end
+
+say "Your total is " + total

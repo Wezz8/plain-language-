@@ -1,0 +1,78 @@
+{
+  "choices": {
+    "name": "Plain · choices",
+    "entry": "choices.plain",
+    "files": {
+      "choices.plain": "set score to 75\n\nif score is at least 50\n  say \"You passed!\"\nelse\n  say \"Keep practising.\"\nend\n"
+    }
+  },
+  "conversation": {
+    "name": "Plain · conversation",
+    "entry": "conversation.plain",
+    "files": {
+      "conversation.plain": "ask \"What is your name?\" into name\nsay \"Hello, \" + name + \"!\"\n\nask number \"How many stars would you like?\" into stars\n\nif stars is at least 0 and stars is at most 20\n  repeat stars times\n    say \"*\"\n  end\nelse\n  say \"Try a whole number from 0 to 20 next time.\"\nend\n"
+    }
+  },
+  "counting": {
+    "name": "Plain · counting",
+    "entry": "counting.plain",
+    "files": {
+      "counting.plain": "set count to 1\n\nrepeat 5 times\n  say \"Count: \" + count\n  set count to count + 1\nend\n\nsay \"All done!\"\n"
+    }
+  },
+  "hello": {
+    "name": "Plain · hello",
+    "entry": "hello.plain",
+    "files": {
+      "hello.plain": "# Your first Plain program.\nset name to \"Ada\"\nsay \"Hello, \" + name + \"!\"\nsay \"You just ran a Plain program.\"\n"
+    }
+  },
+  "shopping": {
+    "name": "Plain · shopping",
+    "entry": "shopping.plain",
+    "files": {
+      "shopping.plain": "set price to 20\nset quantity to 3\nset total to price * quantity\n\nif total is at least 50\n  set total to total - 5\n  say \"You got a 5-point discount.\"\nend\n\nsay \"Your total is \" + total\n"
+    }
+  },
+  "collections": {
+    "name": "Plain · collections",
+    "entry": "main.plain",
+    "files": {
+      "main.plain": "set people to [\n  {name: \"Ada\", score: 92},\n  {name: \"Sam\", score: 78},\n  {name: \"Jo\", score: 85}\n]\n\nfor person at position in people\n  say position, person.name, \"scored\", person.score\nend\n\nmake score_of(person)\n  give person.score\nend\n\nsay \"Scores:\", list.map(people, score_of)\nsay \"Average:\", list.sum(list.map(people, score_of)) / length(people)\nsay \"The first person:\", people[1].name\n"
+    }
+  },
+  "functions": {
+    "name": "Plain · functions",
+    "entry": "main.plain",
+    "files": {
+      "main.plain": "# Reuse a good idea.\nmake double(amount)\n  give amount * 2\nend\n\nmake greet(name)\n  give \"Hello, \" + name + \"!\"\nend\n\nsay greet(\"Ada\")\nsay \"Double 12 is\", double(12)\nsay \"Double a whole list:\", list.map([2, 4, 6], double)\n"
+    }
+  },
+  "modules": {
+    "name": "My first Plain project",
+    "entry": "main.plain",
+    "files": {
+      "helpers.plain": "make greet(name)\n  give \"Hello, \" + name + \"!\"\nend\n\nmake double(amount)\n  give amount * 2\nend\n",
+      "main.plain": "use \"helpers.plain\" as helpers\n\nsay helpers.greet(\"world\")\nfor amount in range(1, 4)\n  say \"Double\", amount, \"is\", helpers.double(amount)\nend\n",
+      "tests/helpers.test.plain": "use \"../helpers.plain\" as helpers\n\ntest \"a personal greeting\"\n  check helpers.greet(\"Ada\") is \"Hello, Ada!\"\nend\n\ntest \"doubling a number\"\n  check helpers.double(6) is 12\nend\n\ntest \"doubling a list\"\n  check list.map([1, 2, 3], helpers.double) is [2, 4, 6]\nend\n"
+    }
+  },
+  "tasks": {
+    "name": "My task manager",
+    "entry": "main.plain",
+    "files": {
+      "main.plain": "use \"tasks.plain\" as tasks\n\nset items to json.read(files.read(\"tasks.json\"))\nsay \"YOUR TASKS\"\nsay \"Commands: list, add, done, quit\"\n\nwhile true\n  tasks.show(items)\n  ask \"What would you like to do?\" into command\n  set command to text.lower(text.trim(command))\n\n  if command is \"quit\"\n    stop\n  else if command is \"add\"\n    ask \"What do you need to do?\" into title\n    if text.trim(title) is not \"\"\n      add {title: title, done: false} to items\n      say \"Task added.\"\n    end\n  else if command is \"done\"\n    ask number \"Which task number?\" into position\n    try\n      tasks.finish(items, position)\n      say \"Nice work. Task completed.\"\n    catch issue\n      say issue.message\n    end\n  else if command is not \"list\"\n    say \"Try list, add, done, or quit.\"\n  end\n\n  files.write(\"tasks.json\", json.write(items, true))\nend\n\nsay \"Your tasks are saved. See you next time!\"\n",
+      "tasks.json": "[\n  {\"title\": \"Build something with Plain\", \"done\": false},\n  {\"title\": \"Try a reusable action\", \"done\": true}\n]\n",
+      "tasks.plain": "make show(items)\n  if length(items) is 0\n    say \"No tasks yet. Add your first one.\"\n  end\n  for item at position in items\n    if item.done\n      say position, \"[done]\", item.title\n    else\n      say position, \"[ ]\", item.title\n    end\n  end\nend\n\nmake finish(items, position)\n  if position is less than 1 or position is more than length(items)\n    fail \"Choose a task number from the list.\"\n  end\n  set items[position].done to true\nend\n",
+      "tests/tasks.test.plain": "use \"../tasks.plain\" as tasks\n\ntest \"a task can be completed\"\n  set items to [{title: \"Learn Plain\", done: false}]\n  tasks.finish(items, 1)\n  check items[1].done is true\nend\n\ntest \"an invalid task number gives a useful error\"\n  set caught to false\n  try\n    tasks.finish([], 1)\n  catch issue\n    set caught to true\n    check text.contains(issue.message, \"task number\")\n  end\n  check caught is true\nend\n"
+    }
+  },
+  "tests": {
+    "name": "Plain · tests",
+    "entry": "main.plain",
+    "files": {
+      "main.plain": "make total(prices)\n  give list.sum(prices)\nend\n\nsay \"The total is\", total([10, 20, 5])\nsay \"Press Run tests to verify the project.\"\n",
+      "totals.test.plain": "use \"main.plain\" as app\n\ntest \"three prices add up\"\n  check app.total([10, 20, 5]) is 35\nend\n\ntest \"an empty basket costs nothing\"\n  check app.total([]) is 0\nend\n\ntest \"decimal values work\"\n  check math.round(app.total([2.5, 1.25]), 2) is 3.75\nend\n"
+    }
+  }
+}

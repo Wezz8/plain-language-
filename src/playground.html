@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Plain Studio — readable code, real programs</title>
+  <!--PLAIN_STYLE-->
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <a class="brand" href="#" aria-label="Plain home"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>plain<span class="brand-dot">.</span></a>
+      <div class="header-note"><a class="handbook-link" href="Manual.html" target="_blank" rel="noopener">Language handbook ↗</a><span class="live-dot"></span>Readable code. Real programs. <span class="version">v1.0</span></div>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="heading">
+        <div>
+          <div class="eyebrow">A LITTLE CODE. A CLEAR IDEA.</div>
+          <h1 id="heading">If you can follow it,<br>you can <em>build it.</em></h1>
+          <p>Short commands. Familiar words. One line at a time.<br class="desktop-break"> Meet a programming language that keeps things simple.</p>
+        </div>
+        <div class="intro-note"><span class="note-arrow" aria-hidden="true">↙</span><span>Change a word.<br>Run it. See what happens.</span></div>
+      </section>
+
+      <section class="workspace" aria-label="Plain playground">
+        <div class="project-bar">
+          <div class="project-identity"><span class="project-icon" aria-hidden="true">▧</span><input id="project-name" aria-label="Project name" maxlength="100" value="My Plain project"><span id="project-status">Local project</span></div>
+          <div class="project-actions"><select id="saved-projects" aria-label="Open a saved project"><option value="">Saved projects</option></select><button id="new-project" class="quiet-button" type="button">New project</button><button id="import-project" class="quiet-button" type="button">Import ZIP</button><button id="export-project" class="quiet-button" type="button">Export ZIP ↓</button></div>
+        </div>
+        <div class="editor-panel">
+          <div class="panel-head">
+            <div class="panel-title"><span class="panel-number">01</span><h2>Your program</h2></div>
+            <label class="example-label" for="example">Try an example</label>
+            <select id="example" aria-label="Choose an example">
+              <option value="hello">Hello, world</option>
+              <option value="counting">Count with me</option>
+              <option value="choices">Make a choice</option>
+              <option value="shopping">A little maths</option>
+              <option value="conversation">Ask a question</option>
+              <option value="functions">Reusable actions</option>
+              <option value="collections">Lists & records</option>
+              <option value="modules">A real project</option>
+              <option value="tasks">A task manager</option>
+              <option value="tests">Write & run tests</option>
+              <option value="draft" disabled>My project</option>
+            </select>
+          </div>
+          <div class="file-bar"><span class="file-dot"></span><span id="filename">hello.plain</span><span id="draft-status">Editable · make it yours</span></div>
+          <div class="file-tab-bar"><div id="file-tabs" class="file-tabs" aria-label="Project files"></div><button id="new-file" class="file-tool" type="button" aria-label="Add a project file">+</button><button id="rename-file" class="file-tool" type="button" aria-label="Rename the current file">Rename</button><button id="delete-file" class="file-tool" type="button" aria-label="Remove the current file">Remove</button></div>
+          <div class="editor-wrap">
+            <div id="line-numbers" class="line-numbers" aria-hidden="true"></div>
+            <textarea id="editor" aria-label="Your Plain program" aria-describedby="editor-hint" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off"></textarea>
+          </div>
+          <div id="diagnostic" class="editor-diagnostic" hidden><button id="diagnostic-link" type="button"></button></div>
+          <div class="editor-tools"><div><button id="format" class="quiet-button" type="button">Format</button><button id="check" class="quiet-button" type="button">Check project</button><button id="test" class="quiet-button" type="button">Run tests</button></div><label for="entry">Start from <select id="entry" aria-label="Project entry file"></select></label></div>
+          <div class="editor-toolbar">
+            <div class="file-actions"><button id="open" class="quiet-button" type="button">Open file</button><button id="save" class="quiet-button" type="button">Save file</button></div>
+            <div class="run-actions"><span class="key-hint" id="editor-hint">Ctrl + Enter to run</span><button id="stop" class="stop-button" type="button" hidden>Stop</button><button id="run" class="run-button" type="button"><span aria-hidden="true">▶</span> Run program</button></div>
+          </div>
+          <input id="file-input" type="file" accept=".plain,.txt,.json,.csv,.md,text/plain" hidden>
+          <input id="zip-input" type="file" accept=".zip,application/zip" hidden>
+        </div>
+
+        <div class="output-panel">
+          <div class="panel-head output-head"><div class="panel-title"><span class="panel-number">02</span><h2>The result</h2></div><span id="status" class="status" data-state="ready">Ready when you are</span></div>
+          <div class="result-tabs" role="group" aria-label="Result view"><button id="view-output" aria-pressed="true" type="button">Output</button><button id="view-values" aria-pressed="false" type="button">Values</button><button id="view-files" aria-pressed="false" type="button">Project files</button><label><input id="network-access" type="checkbox"> Allow HTTP</label></div>
+          <div id="console" class="console" role="log" aria-label="Program output" aria-live="polite" aria-relevant="additions text">
+            <div class="empty-state"><span class="empty-symbol" aria-hidden="true">&gt;_</span><h3>Make it say something.</h3><p>Press <strong>Run program</strong> and<br>watch your words come to life.</p></div>
+          </div>
+          <div id="values-panel" class="inspector" hidden><p>Run a program to inspect its values.</p></div>
+          <div id="files-panel" class="inspector" hidden></div>
+          <form id="input-form" class="input-form" hidden>
+            <label id="question" for="answer"></label>
+            <div class="answer-row"><input id="answer" autocomplete="off" maxlength="10000" aria-describedby="input-error"><button type="submit">Send <span aria-hidden="true">↵</span></button></div>
+            <p id="input-error" role="alert"></p>
+          </form>
+          <div class="console-footer"><span id="result-info">Your output will appear here.</span><span class="offline"><span></span>Works offline</span></div>
+        </div>
+      </section>
+
+      <section class="learn" aria-labelledby="learn-heading">
+        <div class="learn-heading"><div><div class="eyebrow">THE WHOLE IDEA</div><h2 id="learn-heading">A few words go a long way.</h2></div><span>Start with these three.</span></div>
+        <div class="lesson-grid">
+          <article class="lesson"><span class="lesson-index">01 / REMEMBER</span><h3>Give something a name.</h3><pre><code><b>set</b> score <b>to</b> 10
+<b>say</b> score + 5</code></pre><p><code>set</code> saves a value. <code>say</code> shows it.</p></article>
+          <article class="lesson"><span class="lesson-index">02 / CHOOSE</span><h3>Let your code decide.</h3><pre><code><b>if</b> score <b>is at least</b> 10
+  <b>say</b> "Well done!"
+<b>else</b>
+  <b>say</b> "Keep going."
+<b>end</b></code></pre><p>Ask a true-or-false question. Pick a path.</p></article>
+          <article class="lesson"><span class="lesson-index">03 / REPEAT</span><h3>Do a little more.</h3><pre><code><b>repeat</b> 3 <b>times</b>
+  <b>say</b> "I made this."
+<b>end</b></code></pre><p>Repeat a block. Close it with <code>end</code>.</p></article>
+        </div>
+      </section>
+
+      <details class="reference">
+        <summary>Grow from the basics to real programs <span aria-hidden="true">+</span></summary>
+        <div class="reference-grid">
+          <div><h3>Values & maths</h3><p>Use numbers like <code>10</code> or <code>3.5</code>, text like <code>"Hello"</code>, and <code>true</code> or <code>false</code>.</p><p>Maths uses <code>+ - * /</code>. Use parentheses to group things. <code>+</code> also joins text.</p><p>Names start with a letter: <code>score</code>, <code>first_name</code>. Names and commands are case-sensitive. Commands use lowercase.</p></div>
+          <div><h3>Questions & comparisons</h3><pre><code>ask "Your name?" into name
+ask number "Your age?" into age</code></pre><p>Compare with <code>is</code>, <code>is not</code>, <code>is more than</code>, <code>is less than</code>, <code>is at least</code>, or <code>is at most</code>. Number comparisons need numbers.</p><p>Combine conditions with <code>and</code>, <code>or</code>, and <code>not</code>.</p></div>
+          <div><h3>Small, consistent rules</h3><p>One command per line. Put text in double quotes. Start a comment with <code>#</code>.</p><p>Every block closes with <code>end</code>. Indentation helps you read; it does not change the meaning. Lists and text count from <code>1</code>.</p><p>The Studio allows 1,000,000 execution steps, 100,000 output characters, 100 project files, and 5 MB per project. Export a ZIP to keep your work.</p></div>
+          <div><h3>Reusable actions</h3><pre><code>make double(amount)
+  give amount * 2
+end
+say double(12)</code></pre><p>Pass values in parentheses. <code>give</code> returns a result; without it, an action gives <code>nothing</code>. Each call has its own variables. Recursion and returning actions work too.</p></div>
+          <div><h3>Lists, records & loops</h3><pre><code>set people to [{name: "Ada"}]
+add {name: "Sam"} to people
+for person in people
+  say person.name
+end</code></pre><p>Use <code>people[1]</code> for the first item. Change a field with <code>set person.name to "Jo"</code>. <code>remove people[1]</code> removes an item.</p><p><code>while condition</code> repeats while true. <code>skip</code> moves to the next iteration; <code>stop</code> leaves the loop.</p></div>
+          <div><h3>Projects, failures & tests</h3><pre><code>use "helpers.plain" as helpers
+say helpers.double(12)
+
+test "doubling works"
+  check helpers.double(3) is 6
+end</code></pre><p>Add project files with <strong>+</strong>. Imports are relative to their file. Use <code>try</code>, <code>catch problem</code>, and optional <code>finally</code> to handle failures. <code>fail "message"</code> raises one.</p><p>Test files end in <code>.test.plain</code>. Export your project ZIP, extract it, and run it with the included terminal tools. The handbook explains every command and library.</p></div>
+        </div>
+      </details>
+      <details class="reference library-reference"><summary>The standard library <span aria-hidden="true">+</span></summary><label class="library-search-label" for="library-search">Find a function</label><input id="library-search" type="search" placeholder="Try text, files, or list.map"><div id="library-list" class="library-grid"></div></details>
+    </main>
+    <footer class="page-footer"><span class="footer-brand">plain.</span><span>Readable by design. Yours to build on.</span><span>Plain 1.0 · No account. No installation.</span></footer>
+  </div>
+  <dialog id="file-dialog" class="file-dialog"><form id="file-dialog-form"><h2 id="file-dialog-title">Add a file</h2><label for="file-path">File name or project path</label><input id="file-path" placeholder="helpers.plain" required maxlength="200"><p id="file-dialog-error" role="alert"></p><div><button id="file-dialog-cancel" class="quiet-button" type="button">Cancel</button><button class="run-button" type="submit">Save file</button></div></form></dialog>
+  <!--PLAIN_ZIP-->
+  <!--PLAIN_ENGINE-->
+  <!--PLAIN_PROJECT-->
+  <!--PLAIN_APP-->
+</body>
+</html>

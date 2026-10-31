@@ -1,0 +1,35 @@
+use "tasks.plain" as tasks
+
+set items to json.read(files.read("tasks.json"))
+say "YOUR TASKS"
+say "Commands: list, add, done, quit"
+
+while true
+  tasks.show(items)
+  ask "What would you like to do?" into command
+  set command to text.lower(text.trim(command))
+
+  if command is "quit"
+    stop
+  else if command is "add"
+    ask "What do you need to do?" into title
+    if text.trim(title) is not ""
+      add {title: title, done: false} to items
+      say "Task added."
+    end
+  else if command is "done"
+    ask number "Which task number?" into position
+    try
+      tasks.finish(items, position)
+      say "Nice work. Task completed."
+    catch issue
+      say issue.message
+    end
+  else if command is not "list"
+    say "Try list, add, done, or quit."
+  end
+
+  files.write("tasks.json", json.write(items, true))
+end
+
+say "Your tasks are saved. See you next time!"

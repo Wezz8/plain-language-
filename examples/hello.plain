@@ -1,0 +1,4 @@
+# Your first Plain program.
+set name to "Ada"
+say "Hello, " + name + "!"
+say "You just ran a Plain program."

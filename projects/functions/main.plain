@@ -1,0 +1,12 @@
+# Reuse a good idea.
+make double(amount)
+  give amount * 2
+end
+
+make greet(name)
+  give "Hello, " + name + "!"
+end
+
+say greet("Ada")
+say "Double 12 is", double(12)
+say "Double a whole list:", list.map([2, 4, 6], double)

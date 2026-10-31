@@ -1,0 +1,13 @@
+use "../helpers.plain" as helpers
+
+test "a personal greeting"
+  check helpers.greet("Ada") is "Hello, Ada!"
+end
+
+test "doubling a number"
+  check helpers.double(6) is 12
+end
+
+test "doubling a list"
+  check list.map([1, 2, 3], helpers.double) is [2, 4, 6]
+end

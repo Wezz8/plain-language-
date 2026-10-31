@@ -1,0 +1,13 @@
+{
+  "name": "plain-language",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Plain programming language, offline Studio, and project tools.",
+  "bin": { "plain": "./plain.cjs" },
+  "scripts": {
+    "test": "node --test",
+    "build": "node build.cjs",
+    "start": "node plain.cjs"
+  },
+  "engines": { "node": ">=18" }
+}
